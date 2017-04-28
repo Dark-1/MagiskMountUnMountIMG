@@ -9,17 +9,18 @@
 # 
 # By Dark1
 # Profile :
-# http://forum.xda-developers.com/member.php?u=7292542
+# https://forum.xda-developers.com/member.php?u=7292542
+# https://github.com/dark-1
 #
 # This script will do the Following :=
 # 
-# IF [ `magisk.img` is NOT Mount'ed ] , Then :
-#    This *ZIP* will Mount Magisk IMG.
-#    Mount `magisk.img` -> `/Magisk` .
+# IF [ "magisk.img" is NOT Mount'ed ] , Then :
+#    This ZIP will Mount Magisk IMG.
+#    Mount "magisk.img" -> "/Magisk" .
 # 
 # ELSE , Then :
-#    This *ZIP* will UnMount & Shrink Magisk IMG.
-#    UnMount `/Magisk` -> `magisk.img` & Shrink `magisk.img` .
+#    This ZIP will UnMount & Shrink Magisk IMG.
+#    UnMount "/Magisk" -> "magisk.img" & Shrink "magisk.img" .
 #
 # DO Not Touch this Script Unless Necessary.
 #
