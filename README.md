@@ -15,9 +15,9 @@ Profile @ XDA-Developers : [**Dark**❶](http://forum.xda-developers.com/member.
 Profile @ GitHub : [**Dark**❶](https://github.com/dark-1 "GitHub Profile") .   
   
   
-GitHub Pages Site : <Need To Update>  
-GitHub Repository : <Need To Update>  
-XDA Developers Topic : <Need To Update>  
+GitHub Pages Site : [**Magisk Mount & UnMount IMG**](https://dark-1.github.io/MagiskMountUnMountIMG "GitHub Pages") .  
+GitHub Repository : [**MagiskMountUnMountIMG**](https://github.com/dark-1/MagiskMountUnMountIMG "GitHub") .  
+XDA Developers Thread : [**[Magisk] Magisk Mount & UnMount IMG**](https://forum.xda-developers.com/apps/magisk/magisk-mount-unmount-img-t3597614 "XDA Developers") .  
   
 
 ----------
