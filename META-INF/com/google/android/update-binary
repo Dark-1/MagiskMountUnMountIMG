@@ -124,17 +124,17 @@ umount_image()
   fi
 }
 
-# ReSize the Image IF possible
+# ReSize the Image by Shrinking IF possible
 resize_image()
 {
-  MIMG=$1
+  MGKIMG=$1
   # Shrink the image if possible
-  image_size_check $MIMG
+  image_size_check $MGKIMG
   NEWDATASIZE=$((curUsedM / 32 * 32 + 32))
   if [ "$curSizeM" -gt "$NEWDATASIZE" ]; 
   then
-    ui_print "- Shrinking $MIMG to ${NEWDATASIZE}M..."
-    resize2fs $MIMG ${NEWDATASIZE}M
+    ui_print "- Shrinking $MGKIMG to ${NEWDATASIZE}M..."
+    resize2fs $MGKIMG ${NEWDATASIZE}M
   fi
 }
 
@@ -227,7 +227,7 @@ else
   exit 1
 fi
 
-# Magic of the Script is Here
+# Magic to Mount Or UnMount of the Script is Here
 # Study Well :-P  B-)
 if ! is_mounted $MOUNTPATH; 
 then
