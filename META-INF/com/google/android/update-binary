@@ -103,16 +103,24 @@ image_size_check() {
 # UnMount Magisk
 umount_image() 
 {
-  MTPT=$1
-  DEVLOOP=`mount | grep " $MTPT " | head -c 16`
-  umount $MTPT
-  losetup -d $DEVLOOP
-  rmdir $MTPT
-  if ! is_mounted $MTPT; 
+  PATHMOUNT=$1
+  NAMEIMG=$2
+  DEVLOOP=`mount | grep "$PATHMOUNT" | cut -c-16`
+  CHKLOOP=`losetup -a | grep "/$NAMEIMG" | cut -c-16`
+  if [ "$DEVLOOP" == "$CHKLOOP" ];
   then
-    ui_print "- UnMounting $MTPT partition & Detaching $DEVLOOP"
+    umount $PATHMOUNT
+    losetup -d $DEVLOOP
+    rmdir $PATHMOUNT
+    if ! is_mounted $PATHMOUNT;
+    then
+      ui_print "- UnMounting $PATHMOUNT partition & Detaching $DEVLOOP"
+    else
+      ui_print "! UnMounting $PATHMOUNT Failed"
+    fi
   else
-    ui_print "! UnMounting $MTPT Failed"
+     ui_print "! Loop Device $DEVLOOP is Not Equal To $CHKLOOP"
+     ui_print "! UnMounting $PATHMOUNT Failed"
   fi
 }
 
@@ -153,17 +161,17 @@ if [ "$?" -eq "0" ]; then
   done
 fi
 
-if $BOOTMODE && ! is_mounted /magisk; then
+# Variable
+MOUNTPATH=/magisk
+IMGNAME=magisk.img
+
+if $BOOTMODE && ! is_mounted $MOUNTPATH; then
   ui_print "! Magisk is not activated!... abort"
   exit 1
 fi
 
 # Fix SuperSU.....
 $BOOTMODE && $BINDIR/sepolicy-inject --live "allow fsck * * *"
-
-# Variable
-MOUNTPATH=/magisk
-IMGNAME=magisk.img
 
 if $BOOTMODE; then
   MOUNTPATH=/dev/magisk_merge
@@ -194,13 +202,13 @@ mount /cache 2>/dev/null
 
 if is_mounted /data; then
   IMG=/data/$IMGNAME
-  if [ ! -f "/data/magisk.img" ]; then
+  if [ ! -f "/data/$IMGNAME" ]; then
     ui_print "! Magisk is not installed!"
     ui_print "! Magisk is required for this UnMounting!"
     exit 1
   fi
 else
-  IMG=/cache/magisk.img
+  IMG=/cache/$IMGNAME
   ui_print " "
   ui_print "***********************************"
   ui_print "*      !! Data unavailible !!     *"
@@ -233,7 +241,7 @@ then
   fi
 else
   ui_print "- Magisk UnMount IMG Mode"
-  umount_image $MOUNTPATH
+  umount_image $MOUNTPATH $IMGNAME
   # Check if Still Mount'ed
   if is_mounted $MOUNTPATH; 
   then
