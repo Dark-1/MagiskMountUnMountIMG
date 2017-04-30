@@ -80,7 +80,7 @@ mount_image() {
           fi
         fi
         if (is_mounted $2); then
-          ui_print "- Mounting $1 to $2"
+          ui_print "- Mounting \"$1\" to \"$2\""
           break;
         fi
       fi
@@ -100,13 +100,12 @@ image_size_check() {
 
 # Magic of UnMounting is Here
 # Study Well ;-) B-)
-# UnMount Magisk
 umount_image() 
 {
   PATHMOUNT=$1
-  NAMEIMG=$2
-  DEVLOOP=`mount | grep "$PATHMOUNT" | cut -c-16`
-  CHKLOOP=`losetup -a | grep "/$NAMEIMG" | cut -c-16`
+  CHKIMG=$2
+  DEVLOOP=`mount | grep " $PATHMOUNT " | head -n 1 | cut -c -16`
+  CHKLOOP=`losetup -a | grep "$CHKIMG" | head -n 1 | cut -c -16`
   if [ "$DEVLOOP" == "$CHKLOOP" ];
   then
     umount $PATHMOUNT
@@ -114,17 +113,18 @@ umount_image()
     rmdir $PATHMOUNT
     if ! is_mounted $PATHMOUNT;
     then
-      ui_print "- UnMounting $PATHMOUNT partition & Detaching $DEVLOOP"
+      ui_print "- UnMounting \"$PATHMOUNT\""
+	  ui_print "- Detaching \"$DEVLOOP\" from \"$CHKIMG\""
     else
-      ui_print "! UnMounting $PATHMOUNT Failed"
+      ui_print "! UnMounting \"$PATHMOUNT\" Failed"
     fi
   else
-     ui_print "! Loop Device $DEVLOOP is Not Equal To $CHKLOOP"
-     ui_print "! UnMounting $PATHMOUNT Failed"
+     ui_print "! Loop Device \"$DEVLOOP\" is Not Equal To \"$CHKLOOP\""
+     ui_print "! UnMounting \"$PATHMOUNT\" Failed"
   fi
 }
 
-# ReSize the Image by Shrinking IF possible
+# ReSizeing the Image For Shrinking IF possible
 resize_image()
 {
   MGKIMG=$1
@@ -133,7 +133,7 @@ resize_image()
   NEWDATASIZE=$((curUsedM / 32 * 32 + 32))
   if [ "$curSizeM" -gt "$NEWDATASIZE" ]; 
   then
-    ui_print "- Shrinking $MGKIMG to ${NEWDATASIZE}M..."
+    ui_print "- Shrinking \"$MGKIMG\" to ${NEWDATASIZE} M..."
     resize2fs $MGKIMG ${NEWDATASIZE}M
   fi
 }
@@ -204,7 +204,8 @@ if is_mounted /data; then
   IMG=/data/$IMGNAME
   if [ ! -f "/data/$IMGNAME" ]; then
     ui_print "! Magisk is not installed!"
-    ui_print "! Magisk is required for this UnMounting!"
+    ui_print "! Magisk is required to Mount OR UnMount!"
+	ui_print "! Hence... abort!"
     exit 1
   fi
 else
@@ -212,8 +213,8 @@ else
   ui_print " "
   ui_print "***********************************"
   ui_print "*      !! Data unavailible !!     *"
-  ui_print "* Magisk detection is impossible  *"
-  ui_print "* UnMounting will still proceed   *"
+  ui_print "* Magisk detection is impossible! *"
+  ui_print "*     Yet! Will still proceed     *"
   ui_print "*  But please make sure you have  *"
   ui_print "*        Magisk installed!!       *"
   ui_print "***********************************"
@@ -221,9 +222,9 @@ else
 fi
 
 if [ -f "$IMG" ]; then
-  ui_print "- $IMG detected!"
+  ui_print "- \"$IMG\" detected!"
 else
-  ui_print "! $IMG NOT detected!... abort"
+  ui_print "! \"$IMG\" NOT detected!... abort"
   exit 1
 fi
 
@@ -236,16 +237,16 @@ then
   # Check if Still NOT Mount'ed
   if ! is_mounted $MOUNTPATH; 
   then
-    ui_print "! $IMG mount failed... abort"
+    ui_print "! \"$IMG\" mount failed... abort"
     exit 1
   fi
 else
   ui_print "- Magisk UnMount IMG Mode"
-  umount_image $MOUNTPATH $IMGNAME
+  umount_image $MOUNTPATH $IMG
   # Check if Still Mount'ed
   if is_mounted $MOUNTPATH; 
   then
-    ui_print "! $IMG Unmount failed... abort"
+    ui_print "! \"$IMG\" Unmount failed... abort"
     exit 1
   fi
   # Shrink the image if possible
