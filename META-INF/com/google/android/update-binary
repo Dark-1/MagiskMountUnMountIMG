@@ -114,7 +114,7 @@ umount_image()
     if ! is_mounted $PATHMOUNT;
     then
       ui_print "- UnMounting \"$PATHMOUNT\""
-	  ui_print "- Detaching \"$DEVLOOP\" from \"$CHKIMG\""
+      ui_print "- Detaching \"$DEVLOOP\" from \"$CHKIMG\""
     else
       ui_print "! UnMounting \"$PATHMOUNT\" Failed"
     fi
@@ -205,7 +205,7 @@ if is_mounted /data; then
   if [ ! -f "/data/$IMGNAME" ]; then
     ui_print "! Magisk is not installed!"
     ui_print "! Magisk is required to Mount OR UnMount!"
-	ui_print "! Hence... abort!"
+ui_print "! Hence... abort!"
     exit 1
   fi
 else
