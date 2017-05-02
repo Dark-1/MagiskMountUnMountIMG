@@ -1,7 +1,7 @@
 #!/sbin/sh
-#
+# 
 ##########################################################################################
-#
+# 
 # Magisk
 # by topjohnwu
 # 
@@ -11,7 +11,7 @@
 # Profile :
 # https://forum.xda-developers.com/member.php?u=7292542
 # https://github.com/dark-1
-#
+# 
 # This script will do the Following :=
 # 
 # IF [ "magisk.img" is NOT Mount'ed ] , Then :
@@ -21,9 +21,9 @@
 # ELSE , Then :
 #    This ZIP will UnMount & Shrink Magisk IMG.
 #    UnMount "/Magisk" -> "magisk.img" & Shrink "magisk.img" .
-#
+# 
 # DO Not Touch this Script Unless Necessary.
-#
+# 
 ##########################################################################################
 
 # Detect whether in boot mode
