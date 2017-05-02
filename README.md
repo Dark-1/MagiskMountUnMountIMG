@@ -53,7 +53,7 @@ I have **Added** some part of the Code to make it work.
 I have **Removed** Un-Necessary part of Code Because It is *Either* Not Used *OR* Not Needed.  
 I have **Removed** Un-Necessary Directory(s) & File(s) Because It is *Either* Not Used *OR* Not Needed.  
   
-###### EnJoY ...  :joy: ######  
+###### EnJoY ...  :smiley: ######  
   
 #### Credit's ####
   
