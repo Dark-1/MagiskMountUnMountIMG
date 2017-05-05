@@ -73,5 +73,11 @@ Thanks **topjohnwu** for Magisk & for the code in "magisk-module-template" , cou
 - Added some part of the Code.  
 - Removed Un-Necessary part of Code.  
 - Removed Un-Necessary Directory(s) & File(s).  
+   
+#### v1.1 ####  
+- Udated `README` .  
+- Udated `update-binary` .  
+- Added `.gitattributes` .  
+- Fixed `curSizeM` & `curFreeM` .  
   
 .
