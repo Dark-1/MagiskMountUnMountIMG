@@ -40,11 +40,11 @@ This *ZIP* Mount's OR UnMount's on Different Condition's :
 Following is the **Pseudo** Code :  
   
 - IF [ `magisk.img` is NOT Mount'ed ] , Then :  
-  - This *ZIP* will Mount Magisk IMG.  
-  - Mount `magisk.img` -> `/Magisk` .  
+    - This *ZIP* will Mount Magisk IMG.  
+    - Mount `magisk.img` -> `/Magisk` .  
 - ELSE , Then :  
-  - This *ZIP* will UnMount & Shrink Magisk IMG.  
-  - UnMount `/Magisk` -> `magisk.img` & Shrink `magisk.img` .  
+    - This *ZIP* will UnMount & Shrink Magisk IMG.  
+    - UnMount `/Magisk` -> `magisk.img` & Shrink `magisk.img` .  
    
    
 I have **Copied** the Code from "magisk-module-template" ZIP by **topjohnwu**.  
@@ -62,7 +62,7 @@ Thanks **topjohnwu** for Magisk & for the code in "magisk-module-template" , cou
 ----------
 
 ## Changelog ##  
-#### Template v3 ! ####  
+#### Close to Magisk Module Template v3 ! ####  
 #### v0.0 ####  
 - Initialized.  
   
@@ -79,5 +79,18 @@ Thanks **topjohnwu** for Magisk & for the code in "magisk-module-template" , cou
 - Updated `update-binary` .  
 - Added `.gitattributes` .  
 - Fixed `curSizeM` & `curFreeM` .  
+   
+#### v1.2 ####  
+- Updated `README` .  
+- Updated `update-binary` .  
+- Added Function `image_resize_shrink()` & `image_check()` .  
+- Changed Most Function Variable's to Local Variable's .  
+- Modified Check for `IMG` in `/data` OR `/cache` .  
+- In the Above Check , Called `image_check()` .  
+- .  
+- V 1.2 will be Released Soon .   
+- Might Add More Change's .   
+- Kindly Wait Patiently .   
+- .  
   
 .

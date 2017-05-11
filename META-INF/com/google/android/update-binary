@@ -32,11 +32,12 @@ ps | grep zygote | grep -v grep >/dev/null && BOOTMODE=true || BOOTMODE=false
 # Default permissions
 umask 022
 
-##########################################################################################
-# Functions
-##########################################################################################
+###########################################
+## Function's                            ##
+###########################################
 
-ui_print() {
+ui_print() 
+{
   if $BOOTMODE; then
     echo "$1"
   else 
@@ -45,7 +46,8 @@ ui_print() {
   fi
 }
 
-is_mounted() {
+is_mounted() 
+{
   if [ ! -z "$2" ]; then
     cat /proc/mounts | grep $1 | grep $2, >/dev/null
   else
@@ -54,7 +56,8 @@ is_mounted() {
   return $?
 }
 
-mount_image() {
+mount_image() 
+{
   if [ ! -d "$2" ]; then
     mount -o rw,remount rootfs /
     mkdir -p $2 2>/dev/null
@@ -88,25 +91,26 @@ mount_image() {
   fi
 }
 
-image_size_check() {
+image_size_check() 
+{
   e2fsck -yf $1
-  curBlocks=`e2fsck -n $1 2>/dev/null | grep $1 | cut -d, -f3 | cut -d\  -f2`;
-  curUsedM=`echo "$curBlocks" | cut -d/ -f1`
-  curSizeM=`echo "$curBlocks" | cut -d/ -f2`
-  curFreeM=$(((curSizeM - curUsedM) * 4 / 1024))
-  curUsedM=$((curUsedM * 4 / 1024 + 1))
-  curSizeM=$((curSizeM * 4 / 1024))
+  local Blocks=`e2fsck -n $1 2>/dev/null | grep $1 | cut -d, -f3 | cut -d\  -f2`;
+  local UsedM=`echo "$Blocks" | cut -d/ -f1`
+  local SizeM=`echo "$Blocks" | cut -d/ -f2`
+  curFreeM=$(((SizeM - UsedM) * 4 / 1024))
+  curUsedM=$((UsedM * 4 / 1024 + 1))
+  curSizeM=$((SizeM * 4 / 1024))
 }
 
 # Magic of UnMounting is Here
 # Study Well ;-) B-)
 umount_image() 
 {
-  PATHMOUNT=$1
-  CHKIMG=$2
-  DEVLOOP=`mount | grep " $PATHMOUNT " | head -n 1 | cut -c -16`
-  CHKLOOP=`losetup -a | grep "$CHKIMG" | head -n 1 | cut -c -16`
-  if [ "$DEVLOOP" == "$CHKLOOP" ];
+  local PATHMOUNT=$1
+  local CHKIMG=$2
+  local DEVLOOP=`mount | grep " $PATHMOUNT " | head -n 1 | cut -c -16`
+  local CHKLOOP=`losetup -a | grep "$CHKIMG" | head -n 1 | cut -c -16`
+  if [ $DEVLOOP = $CHKLOOP ];
   then
     umount $PATHMOUNT
     losetup -d $DEVLOOP
@@ -120,27 +124,43 @@ umount_image()
     fi
   else
      ui_print "! Loop Device \"$DEVLOOP\" is Not Equal To \"$CHKLOOP\""
-     ui_print "! UnMounting \"$PATHMOUNT\" Failed"
+     ui_print "! Hence UnMounting \"$PATHMOUNT\" Failed"
   fi
 }
 
 # ReSizeing the Image For Shrinking IF possible
-resize_image()
+image_resize_shrink()
 {
-  MGKIMG=$1
-  # Shrink the image if possible
-  image_size_check $MGKIMG
-  NEWDATASIZE=$((curUsedM / 32 * 32 + 32))
+  local CHKIMG=$1
+  # Shrink the Image IF possible
+  image_size_check $CHKIMG
+  local NEWDATASIZE=$((curUsedM / 32 * 32 + 32))
   if [ "$curSizeM" -gt "$NEWDATASIZE" ]; 
   then
-    ui_print "- Shrinking \"$MGKIMG\" to ${NEWDATASIZE} M..."
-    resize2fs $MGKIMG ${NEWDATASIZE}M
+    ui_print "- Shrinking \"$CHKIMG\" to ${NEWDATASIZE} M ..."
+    resize2fs $CHKIMG ${NEWDATASIZE}M
   fi
 }
 
-##########################################################################################
-# Flashable update-binary preparation
-##########################################################################################
+# Image Check
+image_check() 
+{
+  local CHKIMG=$1
+  if [ -f "$CHKIMG" ];
+  then
+    ui_print "- \"$CHKIMG\" Detected!"
+  else
+    ui_print "! \"$CHKIMG\" NOT Detected!"
+    ui_print "! Magisk is NOT Installed!"
+    ui_print "! Magisk is Required for this Uninstaller!"
+    ui_print "! Hence!... Abort"
+    exit 1
+  fi
+}
+
+###########################################
+## Flashable update-binary preparation   ##
+###########################################
 
 OUTFD=$2
 ZIP=$3
@@ -161,12 +181,12 @@ if [ "$?" -eq "0" ]; then
   done
 fi
 
-# Variable
+# Variable's
 MOUNTPATH=/magisk
 IMGNAME=magisk.img
 
 if $BOOTMODE && ! is_mounted $MOUNTPATH; then
-  ui_print "! Magisk is not activated!... abort"
+  ui_print "! Magisk is NOT Activated!... Abort"
   exit 1
 fi
 
@@ -178,20 +198,20 @@ if $BOOTMODE; then
   IMGNAME=magisk_merge.img
 fi
 
-##########################################################################################
-# Main
-##########################################################################################
+###########################################
+## Main                                  ##
+###########################################
 
+# Please leave this message in your flashable zip for credits :-)
 ui_print " "
-# Please leave this message in your flashable zip for credits :)
 ui_print "********************************"
 ui_print " Magisk Mount & UnMount IMG ZIP "
 ui_print " By Dark1                       "
 ui_print "********************************"
 ui_print " "
-ui_print "******************************"
-ui_print "Powered by Magisk (@topjohnwu)"
-ui_print "******************************"
+ui_print "********************************"
+ui_print " Powered by Magisk (@topjohnwu) "
+ui_print "********************************"
 ui_print " "
 
 ui_print "- Mounting /system(ro), /vendor(ro), /data, /cache"
@@ -200,32 +220,23 @@ mount -o ro /vendor 2>/dev/null
 mount /data 2>/dev/null
 mount /cache 2>/dev/null
 
-if is_mounted /data; then
+if is_mounted /data;
+then
   IMG=/data/$IMGNAME
-  if [ ! -f "/data/$IMGNAME" ]; then
-    ui_print "! Magisk is not installed!"
-    ui_print "! Magisk is required to Mount OR UnMount!"
-    ui_print "! Hence... abort!"
-    exit 1
-  fi
+  ui_print "- \"/data\" Availible !"
+  image_check $IMG
 else
   IMG=/cache/$IMGNAME
   ui_print " "
   ui_print "***********************************"
-  ui_print "*      !! Data unavailible !!     *"
-  ui_print "* Magisk detection is impossible! *"
+  ui_print "*      !! Data UnAvailible !!     *"
+  ui_print "* Magisk Detection is Impossible  *"
   ui_print "*     Yet! Will still proceed     *"
   ui_print "*  But please make sure you have  *"
   ui_print "*        Magisk installed!!       *"
   ui_print "***********************************"
   ui_print " "
-fi
-
-if [ -f "$IMG" ]; then
-  ui_print "- \"$IMG\" detected!"
-else
-  ui_print "! \"$IMG\" NOT detected!... abort"
-  exit 1
+  image_check $IMG
 fi
 
 # Magic to Mount Or UnMount of the Script is Here
@@ -237,7 +248,7 @@ then
   # Check if Still NOT Mount'ed
   if ! is_mounted $MOUNTPATH; 
   then
-    ui_print "! \"$IMG\" mount failed... abort"
+    ui_print "! \"$IMG\" mount Failed!... Abort"
     exit 1
   fi
 else
@@ -246,11 +257,11 @@ else
   # Check if Still Mount'ed
   if is_mounted $MOUNTPATH; 
   then
-    ui_print "! \"$IMG\" Unmount failed... abort"
+    ui_print "! \"$IMG\" Unmount Failed!... Abort"
     exit 1
   fi
-  # Shrink the image if possible
-  resize_image $IMG
+  # Shrink the Image IF possible
+  image_resize_shrink $IMG
 fi
 
 if ! $BOOTMODE; then
