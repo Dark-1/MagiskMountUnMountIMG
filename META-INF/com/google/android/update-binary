@@ -247,7 +247,7 @@ then
   # Check if Still NOT Mount'ed
   if ! is_mounted $MOUNTPATH; 
   then
-    ui_print "! \"$IMG\" mount Failed!... Abort"
+    ui_print "! \"$IMG\" Mount Failed!... Abort"
     exit 1
   fi
 else
