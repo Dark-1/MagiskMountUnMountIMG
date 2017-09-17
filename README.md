@@ -15,7 +15,7 @@ Profile @ XDA-Developers : [**Dark**❶](http://forum.xda-developers.com/member.
 Profile @ GitHub : [**Dark**❶](https://github.com/dark-1 "GitHub Profile") .   
 WebSite @ GitHub Pages : [**Dark**❶ WebSite](https://dark-1.github.io "GitHub WebSite") .   
   
-  
+**Magisk Mount & UnMount IMG** :-  
 GitHub Pages Site : [**Magisk Mount & UnMount IMG**](https://dark-1.github.io/MagiskMountUnMountIMG "GitHub Pages") .  
 GitHub Repository : [**MagiskMountUnMountIMG**](https://github.com/dark-1/MagiskMountUnMountIMG "GitHub") .  
 XDA Developers Thread : [**[Magisk] Magisk Mount & UnMount IMG**](https://forum.xda-developers.com/apps/magisk/magisk-mount-unmount-img-t3597614 "XDA Developers") .  
@@ -27,14 +27,15 @@ XDA Developers Thread : [**[Magisk] Magisk Mount & UnMount IMG**](https://forum.
 
 ## Notes ##  
   
-Usefull for Users/Developers who wants to Edit Magisk IMG.  
+Useful for Users/Developers who wants to Edit Magisk IMG.  
+Works WithOut Magisk Binary.  
   
 Module folder can be [Deleted/Added] to [Remove/Add] a Module.  
 File can be [Edited/Modified/Deleted/Added] as per Users/Developers wish.  
   
 This *ZIP* Mount's OR UnMount's on Different Condition's :  
 1. If `magisk.img` is NOT Mount'ed , Then Mount `magisk.img` To `/Magisk` .  
-2. If `magisk.img` is Mount'ed , Then UnMount `/Magisk` From `magisk.img` & Shrink `magisk.img` .  
+2. If `magisk.img` is Mount'ed , Then UnMount `/Magisk` From `magisk.img` .  
    
    
 Following is the **Pseudo** Code :  
@@ -44,7 +45,7 @@ Following is the **Pseudo** Code :
     - Mount `magisk.img` -> `/Magisk` .  
 - ELSE , Then :  
     - This *ZIP* will UnMount & Shrink Magisk IMG.  
-    - UnMount `/Magisk` -> `magisk.img` & Shrink `magisk.img` .  
+    - UnMount `/Magisk` -> `magisk.img` .  
    
    
 I have **Copied** the Code from "magisk-module-template" ZIP by **topjohnwu**.  
@@ -62,7 +63,7 @@ Thanks **topjohnwu** for Magisk & for the code in "magisk-module-template" , cou
 ----------
 
 ## Changelog ##  
-#### Close to Magisk Module Template v3 ! ####  
+  
 #### v0.0 ####  
 - Initialized.  
   
@@ -87,5 +88,16 @@ Thanks **topjohnwu** for Magisk & for the code in "magisk-module-template" , cou
 - Changed Most Function Variable's to Local Variable's .  
 - Modified Check for `IMG` in `/data` OR `/cache` .  
 - And Then , Called `image_check()` to Verify .  
+   
+#### v1.3 ####  
+- Updated `README` .  
+- Updated `update-binary` .  
+- Removed Function `image_resize_shrink()` .  
+- Did Some Optimization of Code .  
+- This Does Not Require Magisk Binary .  
+- This is the Last Release ,  
+- As I am Dis-Continuing this Project ,  
+- Due to Creation of Advance Version of Same .  
+- Thank You .  
   
 .

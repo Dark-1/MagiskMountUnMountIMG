@@ -20,7 +20,7 @@
 # 
 # ELSE , Then :
 #    This ZIP will UnMount & Shrink Magisk IMG.
-#    UnMount "/Magisk" -> "magisk.img" & Shrink "magisk.img" .
+#    UnMount "/Magisk" -> "magisk.img" .
 # 
 # DO Not Touch this Script Unless Necessary.
 # 
@@ -31,6 +31,24 @@ ps | grep zygote | grep -v grep >/dev/null && BOOTMODE=true || BOOTMODE=false
 
 # Default permissions
 umask 022
+
+OUTFD=$2
+ZIP=$3
+
+readlink /proc/$$/fd/$OUTFD 2>/dev/null | grep /tmp >/dev/null
+if [ "$?" -eq "0" ]; then
+  OUTFD=0
+  for FD in `ls /proc/$$/fd`; do
+    readlink /proc/$$/fd/$FD 2>/dev/null | grep pipe >/dev/null
+    if [ "$?" -eq "0" ]; then
+      ps | grep " 3 $FD " | grep -v grep >/dev/null
+      if [ "$?" -eq "0" ]; then
+        OUTFD=$FD
+        break
+      fi
+    fi
+  done
+fi
 
 ###########################################
 ## Function's                            ##
@@ -44,6 +62,12 @@ ui_print()
     echo -n -e "ui_print $1\n" >> /proc/self/fd/$OUTFD
     echo -n -e "ui_print\n" >> /proc/self/fd/$OUTFD
   fi
+}
+
+abort() 
+{
+  ui_print "$1"
+  exit 1
 }
 
 is_mounted() 
@@ -91,17 +115,6 @@ mount_image()
   fi
 }
 
-image_size_check() 
-{
-  e2fsck -yf $1
-  local Blocks=`e2fsck -n $1 2>/dev/null | grep $1 | cut -d, -f3 | cut -d\  -f2`;
-  local UsedM=`echo "$Blocks" | cut -d/ -f1`
-  local SizeM=`echo "$Blocks" | cut -d/ -f2`
-  curFreeM=$(((SizeM - UsedM) * 4 / 1024))
-  curUsedM=$((UsedM * 4 / 1024 + 1))
-  curSizeM=$((SizeM * 4 / 1024))
-}
-
 # Magic of UnMounting is Here
 # Study Well ;-) B-)
 umount_image() 
@@ -128,20 +141,6 @@ umount_image()
   fi
 }
 
-# Shrinking By ReSizeing the Image IF possible
-image_resize_shrink()
-{
-  local CHKIMG=$1
-  # Shrink the Image IF possible
-  image_size_check $CHKIMG
-  local NEWDATASIZE=$((curUsedM / 32 * 32 + 32))
-  if [ "$curSizeM" -gt "$NEWDATASIZE" ]; 
-  then
-    ui_print "- Shrinking \"$CHKIMG\" to ${NEWDATASIZE} M ..."
-    resize2fs $CHKIMG ${NEWDATASIZE}M
-  fi
-}
-
 # Image Check
 image_check() 
 {
@@ -152,9 +151,8 @@ image_check()
   else
     ui_print "! \"$CHKIMG\" NOT Detected!"
     ui_print "! Magisk is NOT Installed!"
-    ui_print "! Magisk is Required for this Uninstaller!"
-    ui_print "! Hence!... Abort"
-    exit 1
+    ui_print "! Magisk is Required to Mount & UnMount!"
+    abort "! Hence!... Abort"
   fi
 }
 
@@ -162,32 +160,11 @@ image_check()
 ## Flashable update-binary preparation   ##
 ###########################################
 
-OUTFD=$2
-ZIP=$3
-
-readlink /proc/$$/fd/$OUTFD 2>/dev/null | grep /tmp >/dev/null
-if [ "$?" -eq "0" ]; then
-  OUTFD=0
-  for FD in `ls /proc/$$/fd`; do
-    readlink /proc/$$/fd/$FD 2>/dev/null | grep pipe >/dev/null
-    if [ "$?" -eq "0" ]; then
-      ps | grep " 3 $FD " | grep -v grep >/dev/null
-      if [ "$?" -eq "0" ]; then
-        OUTFD=$FD
-        break
-      fi
-    fi
-  done
-fi
-
 # Variable's
 MOUNTPATH=/magisk
 IMGNAME=magisk.img
 
-if $BOOTMODE && ! is_mounted $MOUNTPATH; then
-  ui_print "! Magisk is NOT Activated!... Abort"
-  exit 1
-fi
+$BOOTMODE && [ ! is_mounted $MOUNTPATH ] && abort "! Magisk is NOT Activated!... Abort"
 
 # Fix SuperSU.....
 $BOOTMODE && $BINDIR/sepolicy-inject --live "allow fsck * * *"
@@ -245,22 +222,12 @@ then
   ui_print "- Magisk Mount IMG Mode"
   mount_image $IMG $MOUNTPATH
   # Check if Still NOT Mount'ed
-  if ! is_mounted $MOUNTPATH; 
-  then
-    ui_print "! \"$IMG\" mount Failed!... Abort"
-    exit 1
-  fi
+  [ ! is_mounted $MOUNTPATH ] && abort "! \"$IMG\" Mount Failed!... Abort"
 else
   ui_print "- Magisk UnMount IMG Mode"
   umount_image $MOUNTPATH $IMG
   # Check if Still Mount'ed
-  if is_mounted $MOUNTPATH; 
-  then
-    ui_print "! \"$IMG\" Unmount Failed!... Abort"
-    exit 1
-  fi
-  # Shrink the Image IF possible
-  image_resize_shrink $IMG
+  [ is_mounted $MOUNTPATH ] && abort "! \"$IMG\" Unmount Failed!... Abort"
 fi
 
 if ! $BOOTMODE; then
